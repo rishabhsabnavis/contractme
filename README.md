@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ContractMe API
 
 A FastAPI-based application for processing and analyzing contract documents using LangChain and LangGraph.
@@ -122,3 +123,6 @@ See `requirements.txt` for the complete list of dependencies.
 ## Contact
 
 [Add your contact information here] 
+=======
+# contractme
+>>>>>>> ca7f6243d04d1cc7f8bc4fc69fab08c1579d4cdf
