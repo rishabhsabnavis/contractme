@@ -33,3 +33,18 @@ def load_txt(file_path: str) -> str:
     
 
 
+def chunk_documents(docs: List[Any], chunk_size: int = CHUNK_SIZE, chunk_overlap: int= CHUNK_OVERLAP) -> List[Any]:
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len)
+    chunks = text_splitter.split_documents(docs)
+    return chunks
+
+
+def setup_chroma_embeddings():
+    try:
+        embeddings = OpenAIEmbeddings()
+        return embeddings
+    except Exception as e:
+        raise Exception("Error setting up embeddings on Chroma")
+
+
+#def create_or_get_chroma_collection(collection_name: str = "contracts"):
