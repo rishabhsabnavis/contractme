@@ -10,7 +10,6 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 import tempfile
-from data_pipeline.injest import load_pdf, load_txt
 from agent.agent import first_node
 
 app = FastAPI(title="ContractMe API", description="API for processing documents")
@@ -37,15 +36,7 @@ async def upload_file(file: UploadFile = File(...)):
         
         try:
             # Process the file based on its type
-            if file.filename.lower().endswith('.pdf'):
-                injested_data = load_pdf(temp_file_path)
-                content = "\n\n".join([doc.page_content for doc in injested_data])
-            elif file.filename.lower().endswith('.txt'):
-                content = load_txt(temp_file_path)
-            else:
-                # For other file types, try to read as text
-                with open(temp_file_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
+            
             
             # Process with the agent
             state = first_node(content)
