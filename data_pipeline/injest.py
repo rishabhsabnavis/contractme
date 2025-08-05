@@ -47,4 +47,32 @@ def setup_chroma_embeddings():
         raise Exception("Error setting up embeddings on Chroma")
 
 
-#def create_or_get_chroma_collection(collection_name: str = "contracts"):
+def create_or_get_chroma_collection(collection_name: str = "contracts"):
+    try:
+        embeddings = setup_chroma_embeddings()
+        vectorstore = Chroma(persist_directory=CHROMA_PERSIST_DIR, embedding_function=embeddings, collection_name=collection_name)
+        return vectorstore
+    except Exception as e:
+        raise Exception("Error creating or getting Chroma collection")
+
+
+def add_documents_to_chroma(chunks: List[Any], collection_name: str = "contracts") -> Chroma:
+    try:
+        vectorstore = create_or_get_chroma_collection(collection_name)
+        vectorstore.add_documents(chunks)
+        vectorstore.persist()
+        return vectorstore
+
+    except Exception as e:
+        raise Exception("Error adding documents to Chroma")
+    
+
+
+def search_chroma_collection(query: str, collection_name: str = "contracts", k: int = 5):
+    try:
+        vectorstore = create_or_get_chroma_collection(collection_name)
+        results = vectorstore.similarity_search(query, k=k)
+        return results
+    except Exception as e:
+        raise Exception("Error searching Chroma collection")
+    
