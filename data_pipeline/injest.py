@@ -7,6 +7,8 @@ from langchain_community.vectorstores import Chroma
 import os
 from typing import List, Dict, Any 
 from dotenv import load_dotenv
+from langchain.schema import Document
+
 #Config Stuff
 CHROMA_PERSIST_DIR = "./chroma_db"
 CHUNK_SIZE = 1000
@@ -76,3 +78,57 @@ def search_chroma_collection(query: str, collection_name: str = "contracts", k: 
     except Exception as e:
         raise Exception("Error searching Chroma collection")
     
+
+def process_pdf_with_chroma(file_path: str, collection_name: str = "contracts") -> Dict[str, Any]:
+    try:
+        docs = load_pdf(file_path)
+        chunks = chunk_documents(docs)
+        vectorstore = add_documents_to_chroma(chunks, collection_name)
+        return {
+            "original_docs": docs,
+            "chunks": chunks,
+            "vectorstore": vectorstore,
+            "num_chunks": len(chunks),
+            "collection_name": collection_name,
+            "status": "success"
+        }
+    except Exception as e:
+        raise Exception("Error processing PDF with Chroma")
+    
+def process_text_with_chroma(text: str, collection_name: str = "contracts") -> Dict[str, Any]:
+    try:
+        # Step 1: Create document from text
+        doc = Document(page_content=text, metadata={"source": "text_input"})
+        
+        # Step 2: Chunk text
+        chunks = chunk_documents([doc])
+        
+        # Step 3: Add to ChromaDB
+        vectorstore = add_documents_to_chroma(chunks, collection_name)
+        
+        # Step 4: Return results
+        return {
+            "chunks": chunks,
+            "num_chunks": len(chunks),
+            "collection_name": collection_name,
+            "status": "success"
+        }
+    except Exception as e:
+        raise Exception("Error processing text with Chroma")
+    
+def clear_chroma_collection(collection_name: str = "contracts"):
+    try:
+        vectorstore = create_or_get_chroma_collection(collection_name)
+        vectorstore._collection.delete(where={})
+        return{"message": "Collection deleted successfully"}
+    except Exception as e:
+        raise Exception("Error clearing Chroma collection")
+    
+
+    
+
+
+
+
+
+
