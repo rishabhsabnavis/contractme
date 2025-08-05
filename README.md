@@ -66,7 +66,6 @@ The API will be available at `http://localhost:8000`
 
 - `GET /`: Health check endpoint
 - `POST /upload`: Upload and process documents
-- `POST /process`: Alternative document processing endpoint
 
 ### Example Usage
 
@@ -74,15 +73,19 @@ The API will be available at `http://localhost:8000`
 import requests
 
 # Upload a document
-file_data = {
-    "filename": "contract.pdf",
-    "file_type": "pdf",
-    "file_size": 1024,
-    "content": "Contract content here..."
-}
+with open("contract.pdf", "rb") as f:
+    files = {"file": ("contract.pdf", f, "application/pdf")}
+    response = requests.post("http://localhost:8000/upload", files=files)
+    print(response.json())
+```
 
-response = requests.post("http://localhost:8000/upload", json=file_data)
-print(response.json())
+Or using curl:
+
+```bash
+curl -X POST "http://localhost:8000/upload" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@your_document.pdf"
 ```
 
 ## Development
