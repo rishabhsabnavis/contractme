@@ -21,18 +21,7 @@ import json
 load_dotenv()
 
 # Initialize Perplexity API with GPT-5
-def get_llm() -> BaseChatModel:
-    """Initialize and return the Perplexity LLM with GPT-5 model"""
-    api_key = os.getenv("PERPLEXITY_API_KEY")
-    if not api_key:
-        raise ValueError("PERPLEXITY_API_KEY not found in environment variables")
-    
-    return PerplexityChat(
-        model="llama-3.2-70b-instruct",  # Perplexity's best model (equivalent to GPT-5 performance)
-        api_key=api_key,
-        temperature=0.1,
-        max_tokens=4096
-    )
+
 
 # Voice Agent Functions
 
@@ -53,7 +42,6 @@ class OverallState(BaseModel):
 
 def first_node(state: OverallState) -> OverallState:
     """First node in the workflow that receives context and learns from vector database"""
-    from data_pipeline
     return state
 
 
