@@ -7,8 +7,9 @@
 import logging
 from typing import Any, Dict, List, TypedDict
 import langgraph 
-from pydantic import BaseModel
+from pydantic import BaseModel, Optional
 from langgraph.graph import END, START, StateGraph, Graph
+
 #from data_pipeline()
 
 
@@ -16,6 +17,15 @@ from langgraph.graph import END, START, StateGraph, Graph
 class OverallState(BaseModel):
     context: List[str]
     answer: str
+    utterance: str
+    history: List[str]
+    call_sid: Optional[str]
+    metadata: Optional[dict]
+
+
+
+
+
 
 
 
