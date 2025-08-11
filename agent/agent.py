@@ -1,34 +1,25 @@
-import langgraph
-
-from dotenv import load_dotenv
+# Core Agent Logic, Nodes, and Graph Setup
+# This file will contain:
+# - Agent class/implementation
+# - Processing nodes
+# - LangGraph workflow
+# - State management
+import logging
+from typing import Any, Dict, List, TypedDict
+import langgraph 
 from pydantic import BaseModel
-
-
-
-class InputState(BaseModel):
-    contract_text: str = ""
+from langgraph.graph import END, START, StateGraph, Graph
+#from data_pipeline()
 
 
 
 class OverallState(BaseModel):
-    contract_text: str = ""
-    contract_summary: str = ""
-    contract_analysis: str = ""
-    contract_recommendations: str = ""
-    contract_questions: str = ""
-    contract_answers: str = ""
-    contract_issues: str = ""
-    contract_suggestions: str = ""
+    context: List[str]
+    answer: str
 
 
 
-def first_node(content: str) -> OverallState:
-    """Process contract content and return state"""
-    state = OverallState()
-    state.contract_text = content
-    
-    # Here you can add more processing logic
-    # For now, we'll just set the contract_text
-    # You can add LLM calls, analysis, etc. here
-    
-    return state
+
+
+
+
