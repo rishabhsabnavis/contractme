@@ -28,23 +28,67 @@ load_dotenv()
 
 
 class OverallState(BaseModel):
-    context: List[str] = []
-    answer: str = ""
+
+    #Voice conversation state
     utterance: str = ""
-    history: List[str] = []
-    call_sid: Optional[str] = None
-    metadata: Optional[dict] = None
+    answer: str = ""
+    call_sid = Optional[str] = None
+    history = List[str] = []
+
+
+    #Conversation Flow
     current_step: str = "greeting"
+    intent: str = "unknown"
+
+
+
+    #Context for RAG
+    context: List[str] = []
+    relevant_docs =  List[Document] = []
+
+
+   
+    metadata: Optional[dict] = None
+
+   
     contract_analysis: str = ""
     contract_summary: str = ""
     contract_recommendations: str = ""
 
+    #Venue data
+    venue_name: str = ""
+    query_type: str = "" #'availability, pricing, contract, general
 
-def first_node(state: OverallState) -> OverallState:
-    """First node in the workflow that receives context and learns from vector database"""
-    return state
 
 
+
+def get_llm() -> BaseChatModel:
+    """Initialize and return the Perplexity LLM with GPT-5 model"""
+    api_key = os.getenv("PERPLEXITY_API_KEY")
+    if not api_key:
+        raise ValueError("PERPLEXITY_API_KEY not found in environment variables")
+    
+    return PerplexityChat(
+        model="llama-3.2-70b-instruct",  # Perplexity's best model (equivalent to GPT-5 performance)
+        api_key=api_key,
+        temperature=0.1,
+        max_tokens=4096
+    )
+
+
+
+
+
+
+
+
+def create_venue_agent_graph() -> StateGraph:
+    """Agent Workflow"""
+    workflow = StateGraph(state_type=OverallState)
+
+    workflow.add_node("Retrieve Venue Context", retrieve_venue_context)
+    workflow.add_node("Generate RAG Response", generate_rag_response)
+    workflow.add_node("Classify Intent", classify_intent)
 
 
 

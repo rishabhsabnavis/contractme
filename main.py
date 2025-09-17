@@ -4,15 +4,19 @@
 #from dotenv import load_dotenv
 from fastapi import FastAPI
 import uvicorn
-from fastapi import UploadFile, File
+from fastapi import UploadFile, File, Request
 from fastapi import HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import os
 import tempfile
-from agent.agent import first_node
+from agent.agent import create_venue_agent_graph
+from agent.helpers import parse_twilio_webhook, generate_twiml_response
 
-app = FastAPI(title="ContractMe API", description="API for processing documents")
+app = FastAPI(title="ContractMe API", description="API for calling venues and processing documents")
+
+
+
 
 class FileData(BaseModel):
     filename: str
@@ -20,9 +24,18 @@ class FileData(BaseModel):
     file_size: int
     content: str
 
+
+
+
+
 @app.get("/")
 def read_root():
     return {"message": "ContractMe API is running!"}
+
+@app.post("/voice")
+async def handle_voice_webhook(request: Request):
+    """Handle voice webhook"""
+    return {"message": "Voice webhook received!"}
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -67,6 +80,7 @@ async def upload_file(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 
 
 
